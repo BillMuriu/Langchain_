@@ -10,3 +10,15 @@ import nltk
 os.environ['OPENAI_API_KEY'] =''
 
 loader = DirectoryLoader('/chunk_txt', glob='**/*.txt')
+
+
+documents = loader.load()
+
+
+text_splitter = CharacterTextSplitter(chunk_size=1000, overlap=0)
+
+
+texts = text_splitter.split_documents(documents)
+
+
+embeddings = OpenAIEmbeddings(openai_api_key=os.environ['OPENAI_API_KEY'])
