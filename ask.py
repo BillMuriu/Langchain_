@@ -10,13 +10,9 @@ from IPython.display import Markdown, display
 #construct index function
 
 def construct_index(directory_path):
-    # set maximum input size
     max_input_size = 4096
-    # set number of output tokens
     num_outputs = 2000
-    # set maximum chunk overlap
     max_chunk_overlap = 20
-    # set chunk size limit
     chunk_size_limit = 600 
 
     # define LLM
