@@ -28,3 +28,10 @@ def construct_index(directory_path):
     index.save_to_disk('index.json')
 
     return index
+
+def ask_ai():
+    index = GPTSimpleVectorIndex.load_from_disk('index.json')
+    while True: 
+        query = input("What do you want to ask? ")
+        response = index.query(query, response_mode="compact")
+        display(Markdown(f"Response: <b>{response.response}</b>"))
