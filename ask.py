@@ -6,3 +6,7 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 import magic
 import os
 import nltk
+
+os.environ['OPENAI_API_KEY'] =''
+
+loader = DirectoryLoader('/chunk_txt', glob='**/*.txt')
