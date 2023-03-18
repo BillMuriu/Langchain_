@@ -22,3 +22,11 @@ texts = text_splitter.split_documents(documents)
 
 
 embeddings = OpenAIEmbeddings(openai_api_key=os.environ['OPENAI_API_KEY'])
+
+
+docsearch = Chroma.from_documents(texts, embeddings)
+
+
+qa = VectorDBQA.from_chain_type(llm=OpenAI(), chain_type="stuff", vectorstore=docsearch)
+
+
