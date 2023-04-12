@@ -1,31 +1,33 @@
-from gpt_index import SimpleDirectoryReader, GPTListIndex, GPTSimpleVectorIndex, LLMPredictor, PromptHelper
-from langchain import OpenAI
-import sys
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
+from langchain.text_splitter import CharacterTextSplitter
+from langchain import OpenAI, VectorDBQA
+from langchain.document_loaders import DirectoryLoader
 import os
+import nltk
+import magic
 
-os.environ["OPENAI_API_KEY"] = ''
+os.environ["OPENAI_API_KEY"] = 
 
-def construct_index(directory_path):
-    max_input_size = 4096
-    num_outputs = 256
-    max_chunk_overlap = 20
-    chunk_size_limit = 600
-    prompt_helper = PromptHelper(max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit=chunk_size_limit)
-    llm_predictor = LLMPredictor(llm=OpenAI(temperature=0, model_name="text-ada-001", max_tokens=num_outputs))
-    documents = SimpleDirectoryReader(directory_path).load_data()
-    index = GPTSimpleVectorIndex(documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
-    index.save_to_disk('index.json')
-    return index
+loader = DirectoryLoader('chunk_txt/', glob='**/*.txt')
+docs = loader.load()
 
-def ask_bot(input_index='index.json'):
-    index = GPTSimpleVectorIndex.load_from_disk(input_index)
-    while True:
-        query = input('What do you want to ask the bot?   \n')
-        response = index.query(query, response_mode="compact")
-        if response.response is not None:
-            print("\nBot says: \n\n" + response.response + "\n\n\n")
-        else:
-            print("\nBot says: \n\n" + "I'm sorry, I don't have an answer for that. Please try another question.\n\n\n")
+char_text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap = 0)
 
-index = construct_index("\chunk_txt")
-ask_bot('index.json')
+doc_chunks = char_text_splitter.split_documents(docs)
+
+print(doc_chunks)
+
+openAI_embeddings = OpenAIEmbeddings(openai_api_key=os.environ["OPENAI_API_KEY"])
+
+embeddings = openAI_embeddings.embed_documents(texts=doc_chunks)
+
+qa = VectorDBQA.from_chain_type(llm=OpenAI(), chain_type="stuff", vectorstore=docsearch)
+
+# Extract only the embedded vectors from each document
+vector_list = []
+for doc_vectors in embeddings:
+    for vector in doc_vectors:
+        vector_list.append(vector)
+
+vstore = Chroma.from_vectors(vector_list)
