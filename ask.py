@@ -47,10 +47,9 @@ def gpt3_embedding(content, engine='text-embedding-ada-002'):
 # create a list to hold the chunk dictionaries
 chunk_dicts = []
 
-
 for i, text in enumerate(texts):
     chunk_id = str(uuid.uuid4())
-    chunk_text = text['page_content']
+    chunk_text = text.page_content
     embedding = gpt3_embedding(chunk_text)
     chunk = {
         "id": chunk_id,
@@ -59,10 +58,8 @@ for i, text in enumerate(texts):
     }
     chunk_dicts.append(chunk)
 
-
-
 with open("chunks.json", "w") as f:
     for chunk_dict in chunk_dicts:
-        chunk_dict["text"] = chunk_dict["text"].__dict__  # Convert Document object to dictionary
+        chunk_dict["text"] = str(chunk_dict["text"]) # Convert text to a string
         json.dump(chunk_dict, f)
         f.write("\n")
