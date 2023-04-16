@@ -30,13 +30,6 @@ texts = text_splitter.split_documents(data)
 print (f'Now you have {len(texts)} documents')
 
 
-# def view_first_three_chunks(texts):
-#     return texts[:3]
-
-# first_three_chunks = view_first_three_chunks(texts)
-# print(first_three_chunks)
-
-# Assign a unique ID to each chunk
 chunks = []
 for i, text in enumerate(texts):
     chunk_id = str(uuid.uuid4())
@@ -46,8 +39,25 @@ for i, text in enumerate(texts):
     }
     chunks.append(chunk)
 
-# Store the chunks in a list
-print(f'Now you have {len(chunks)} chunks')
-for chunk in chunks:
-    print(chunk)
 
+for i, chunk in enumerate(chunks):
+    if i < 3:
+        print(f"Chunk ID: {i+1}")
+        print(chunk)
+
+
+# create a list to hold the chunk dictionaries
+chunk_dicts = []
+for i, text in enumerate(texts):
+    chunk_id = str(uuid.uuid4())
+    chunk = {
+        "id": chunk_id,
+        "text": text
+    }
+    chunk_dicts.append(chunk)
+
+with open("chunks.json", "w") as f:
+    for chunk_dict in chunk_dicts:
+        chunk_dict["text"] = chunk_dict["text"].__dict__  # Convert Document object to dictionary
+        json.dump(chunk_dict, f)
+        f.write("\n")
