@@ -8,6 +8,8 @@ import pinecone
 import os
 import nltk
 import magic
+import json
+import uuid
 
 with open('openaiapikey.txt', 'r') as f:
     api_key = f.read().strip()
@@ -27,25 +29,25 @@ texts = text_splitter.split_documents(data)
 
 print (f'Now you have {len(texts)} documents')
 
-embeddings = OpenAIEmbeddings(openai_api_key=os.environ["OPENAI_API_KEY"])
 
+# def view_first_three_chunks(texts):
+#     return texts[:3]
 
-# initialize pinecone
+# first_three_chunks = view_first_three_chunks(texts)
+# print(first_three_chunks)
 
+# Assign a unique ID to each chunk
+chunks = []
+for i, text in enumerate(texts):
+    chunk_id = str(uuid.uuid4())
+    chunk = {
+        "id": chunk_id,
+        "text": text
+    }
+    chunks.append(chunk)
 
+# Store the chunks in a list
+print(f'Now you have {len(chunks)} chunks')
+for chunk in chunks:
+    print(chunk)
 
-index_name = "first-index"
-
-docsearch = Pinecone.from_texts([t.page_content for t in texts], embeddings, index_name=index_name)
-
-
-llm = OpenAI (temperature=0, openai_api_key=os.environ["OPENAI_API_KEY"])
-chain = load_qa_chain(llm, chain_type="stuff")
-
-query = "What is Specific Knowledge?"
-docs = docsearch.similarity_search(query, include_metadata=True)
-
-
-chain.run(input_documents=docs, question=query)
-
-print(chain.run(input_documents=docs, question=query))
