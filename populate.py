@@ -1,8 +1,15 @@
 import chromadb
 from chromadb.utils import embedding_functions
+from chromadb.config import Settings
 import os
 import openai
 import json
+
+
+client = chromadb.Client(Settings(
+    chroma_db_impl="duckdb+parquet",
+    persist_directory="/Users/USER/Documents/gpt3-tut/Gpt3_index_/.chroma" # Optional, defaults to .chromadb/ in the current directory
+))
 
 with open('openaiapikey.txt', 'r') as f:
     api_key = f.read().strip()
@@ -15,16 +22,14 @@ def open_file(filepath):
 
 openai.api_key = open_file('openaiapikey.txt')
 
-
-
-chroma_client = chromadb.Client()
-
 openai_ef = embedding_functions.OpenAIEmbeddingFunction(
                 api_key=openai.api_key,
                 model_name="text-embedding-ada-002"
             )
 
-collection = chroma_client.create_collection(name="my_collection", embedding_function=openai_ef)
+# collection = client.create_collection(name="my_collection", embedding_function=openai_ef)
+collection = client.get_collection(name="my_collection", embedding_function=openai_ef)
+print(collection)
 
 
 collection.add(
@@ -32,5 +37,18 @@ collection.add(
     ids=["id1", "id2", "id3",]
 )
 
+# collection.add(
+#     documents=["doc1", "doc2", "doc3", ...],
+#     embeddings=[[1.1, 2.3, 3.2], [4.5, 6.9, 4.4], [1.1, 2.3, 3.2], ...],
+#     metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}, ...],
+#     ids=["id1", "id2", "id3", ...]
+# )
 
+
+# results = collection.query(
+#     query_texts=["What is specific knowledge?"],
+#     n_results=2
+# )
+
+# print(results)
 
