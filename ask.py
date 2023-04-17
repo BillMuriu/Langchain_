@@ -1,16 +1,13 @@
-from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import UnstructuredPDFLoader, OnlinePDFLoader
-from langchain.vectorstores import Pinecone
-from langchain.llms import OpenAI
 from langchain.chains.question_answering import load_qa_chain
-import pinecone
 import os
 import nltk
 import magic
 import json
 import uuid
 import openai
+import chromadb
 
 with open('openaiapikey.txt', 'r') as f:
     api_key = f.read().strip()

@@ -1,23 +1,26 @@
-import pinecone
-import json
+import chromadb
+from chromadb.utils import embedding_functions
+import os
+import openai
 
-# with open("chunks.json", "r") as f:
-#     chunks = [json.loads(line) for line in f]
+with open('openaiapikey.txt', 'r') as f:
+    api_key = f.read().strip()
+    os.environ["OPENAI_API_KEY"] = api_key
 
-# for i in range(3):
-#     chunk = chunks[i]
-#     print(f"Chunk {i + 1}")
-#     print(f"ID: {chunk['id']}")
-#     print(f"Text: {chunk['text']}")
-#     print(f"Embedding: {chunk['embedding']}")
-#     print()
-
-pinecone.init(
-    api_key = "0c54847e-ce3a-4eef-9d26-e19e6f93a35c",
-    environment = "asia-southeast1-gcp"
-)
-
-index_name = "first-index"
+def open_file(filepath):
+    with open(filepath, 'r', encoding='utf-8') as infile:
+        return infile.read()
 
 
-index = pinecone.Index("first-index")
+openai.api_key = open_file('openaiapikey.txt')
+
+
+
+chroma_client = chromadb.Client()
+
+openai_ef = embedding_functions.OpenAIEmbeddingFunction(
+                api_key=openai.api_key,
+                model_name="text-embedding-ada-002"
+            )
+
+collection = chroma_client.create_collection(name="my_collection", embedding_function=openai_ef)
