@@ -29,7 +29,7 @@ openai_ef = embedding_functions.OpenAIEmbeddingFunction(
 
 # collection = client.create_collection(name="my_collection", embedding_function=openai_ef)
 collection = client.get_collection(name="my_collection", embedding_function=openai_ef)
-print(collection)
+# print(collection)
 
 
 # with open("chunks.json", "r") as f:
@@ -47,7 +47,7 @@ print(collection)
 # collection.add(documents=documents, embeddings=embeddings, ids=ids)
 
 results = collection.query(
-    query_texts=["What is specific knowledge?"],
+    query_texts=["What types of leverage should I focus on acquiring?"],
     n_results=3
 )
 
